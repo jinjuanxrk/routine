@@ -1,0 +1,336 @@
+\documentclass[a4,11pt,epsf, amssymb]{article}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{rotating}
+%\input{../../Yuan/psfig.sty}
+\usepackage{amsmath,amsfonts,latexsym,amssymb}
+\usepackage{mathrsfs}
+    \setlength{\textwidth}{6in}
+    \setlength{\textheight}{8in}
+    \setlength{\oddsidemargin}{0in}
+    \setlength{\topmargin}{0in}
+\def\ditem{\vspace{-0.1cm} \item}
+%\setcounter{page}{2458}
+
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{indentfirst}
+\usepackage{CJK}
+\usepackage{diagbox}
+
+
+\renewcommand{\baselinestretch}{1.5}
+
+
+\begin{document}
+
+\begin{center}
+{\bf\LARGE Combining High-dimensional Biomarkers with Limit of Detection}
+
+Jinjuan Wang$^1$, Yunpeng Zhao$^{2,*}$, Larry L Tang$^2$, Qizhai Li$^1$
+
+$^1$LSC, NCMIS, Academy of Mathematics and Systems Science, Chinese Academy of Sciences
+
+$^2$
+
+*Corresponding author,E-mail: yzhao15@gmu.edu
+\end{center}
+
+\section{Introduction}
+
+The limit of detection (LOD)  is often encountered when measuring proteomic markers. Due to the limited detecting ability of an equipment or instrument, it is difficult to measure markers at a relatively  low level.    If the marker value of a subject is beyond the range of the detection, the subject is assigned the measurement of NA ({\bf REF}).  The ultrasensitive immunosensors and  arrays based on nanotechnology have been developed to improve the LOD. However, in point-of-care applications, the LOD is still a
+challenging issue in evaluating diagnostic accuracy    with available statistical methods ({\bf REF}).  One may assume that  non-NA observations   follow multivariate normal distributions, and empirically estimate mean vector and variance covariance matrices for two populations using only non-NA observations.   Another method is to replace NA with some constant, and  then estimate parameters using all the data ({\bf REF}). But both methods may lead to biased parameter estimators ({\bf REF}).
+  A maximum likelihood estimation method (MLE) can be used to estimate parameters in the distributions of two markers or more markers   ({\bf REF}). However, these existing methods can not be applied to the high dimensional proteomic biomarkers since the likelihood functions for estimating mean and covariance matrices can no longer be optimized without additional penalty terms or simplified assumptions on the covariance matrices.
+
+High dimensional biomarker data are often encountered in contemporary studies when the dimension of the biomarkers greatly exceeds the sample sizes.  Dimension reduction techniques have been proposed to deal with biomarkers with LOD (see for example, ({\bf REF}). However, the inference post dimension reduction is not trivial.
+
+When assessing the discriminating diagnostic ablitity of a biomarker, receiver operating characteristic(ROC) curve is an important tool. The ROC curve of a biomarker can be obtained via plotting its sensitivity(true positive rate) versus 1 minus
+its specificity(true negative rate). The area and partial area under the ROC curve(AUC) are widely used for measuring the performance of a biomarker, with larger the area meaning better peformance. In some diagnostic studies, multiple biomarkers are measured. In this case, combining these biomarkers can improve diagnostic accuracy.
+
+In this work, we propose a resample-replace procedure to handle this issue. We first  estimate the mean and variance parameters for a biomarker with lowest missing rate and draw the sample from the estimated normal distribution. We then use conduct the linear regression on one biomarker with the second lowest missing value on the biomarker with full data and use the fitted values to replace its missing values. After that we optimize the penalized likelihood function for cases and controls using a graphical LASSO.
+Our method leads to valid
+ROC curve estimation without explicit parametric distribution assumption even for high dimensional proteomic markers.
+
+\section{Method}
+
+\subsection{Notations}
+Suppose  that there are $m+n$ subjects enrolled and $p$ biomarkers are measured on each subject in a study, where $m$ subjects are randomly sampled from case population and $n$ subjects are randomly sampled from control population.
+Assume that the detection limit value of the $j$th biomarker is $d_j~(d_j>0)$, $j=1,\cdots,p$, that means, when the value of the $j$th biomarker on a subject is larger than $d_j$, it can be observed, otherwise it is missing, in which NA is used to denote it.
+Denote the value of the $j$th biomarker on the $i$th subject by $x_{ij}$ in case population, $i=1,\cdots,m$, and that on the $k$th individual by $y_{kj}$ in control population, $k=1,\cdots,n$, $j=1,\cdots,p$.
+Let ${\bf X}=(x_{ij})_{m\times p}$, and $m_j$ be the number of missing values  among $m$ case subjects for the $j$th biomarker, and ${\bf Y}=(y_{kj})_{n\times p}$, and $n_j$ be the number of missing values  among  $n$ control subjects  for the $j$th biomarker, $j=1,\cdots,p$. Without loss of generality, we assume that $0\leq m_1\leq m_2\leq \cdots\leq m_p<m$,
+$x_{gj}$ is not NA  for $g=1,\cdots,m-m_j$, $0\leq n_1\leq n_2\leq \cdots\leq n_p<n$,
+and  $y_{gj}$ is not NA  for $g=1,\cdots,n-n_j$, $j=1,\cdots,p$.
+
+Suppose that there exist $a$ and $b$ such that $m_a>0$ and $m_{a-1}=0$, and $n_b>0$ and $n_{b-1}=0$, where $m_0=n_0=0$.
+Let $\mu_x=(\mu_{x1},\cdots,\mu_{xp})^\tau$ and $\mu_y=(\mu_{y1},\cdots,\mu_{yp})^\tau$ be the population means of case and control populations, respectively, and $U_x$ and $U_y$ be the corresponding variance and covariance matrices, where $\tau$ denote the transpose of a vector or a matrix. Denoet a $L-$dimensional column vector with the unit being 1 by ${\bf 1}_L$, where $L$ in an positive integer.
+
+
+
+
+\subsection{Estimation Procedure}
+
+From  Su and Liu ({\bf REF}) and Liu et.al. ({\bf REF}), the optimal linear combination coefficient maximizing AUC of the combined marker is given by
+$$\eta = (U_x + U_y)^{-1}(\mu_x - \mu_y)$$
+The corresponding AUC is
+$$\hbox{AUC} = \Phi\left(\sqrt{(\mu_x - \mu_y)^{\tau}(U_x + U_y)^{-1}(\mu_x - \mu_y)}\right),$$
+where $\Phi(\cdot)$ denotes the cumulative distribution function of a standard normal distribution.
+Denote $\zeta(\eta) = \frac{\eta^{\tau}(\mu_x - \mu_y)}{(\eta^{\tau}U_x\eta)^{1/2}}$, and
+$\xi(\eta) = \frac{(\eta^{\tau}U_y\eta)^{1/2}}{(\eta^{\tau}U_x\eta)^{1/2}}$
+The pAUC for $\alpha$ is
+$$\hbox{pAUC}(\alpha) = \int_0^{\alpha}\Phi\left(\zeta(\eta)-\xi(\eta)\Phi^{-1}(1-p)\right)\,\hbox{d}p$$
+
+
+We now  estimate $\mu_x,\mu_y,U_x$, and $U_y$.
+We propose to replace NAs using observations randomly sampled from an inferred distribution for the biomarker with the lowest missing rate based on its observed data.
+Then we use the fitted values by linear regression to replace the NAs of the other biomarkers based on the imputed ones. This is motivated the fact that the conditional mean of a variable give other variables is a linear function of
+means of  other variables when they are jointly follow a multiple-variate normal distribution.
+
+The likelihood function for the $a$th biomarker in case is
+$$L_{xa}(\mu_{xa},\sigma_{xa}^2)=\prod\limits_{i=1}^{m-m_a} \frac{\phi\big(\frac{x_{ia}-\mu_{xa}}{\sigma_{xa}}\big)}{1-\Phi\big(\frac{d_a-\mu_{xa}}{\sigma_{xa}}\big)},$$
+and the log-likelihood function is
+$$l_{xa}(\mu_{xa},\sigma_{xa}^2) = -\sum_{i=1}^{m-m_a}\frac{(x_{ia}-\mu_{xa})^2}{2\sigma_{xa}^2}-(m-m_a)\ln\left[1-\Phi\Big(\frac{d_a-\mu_{xa}}{\sigma_{xa}}\Big)\right]-(m-m_a)\ln\sigma_{xa}-\frac{m-m_a}{2}\ln(2\pi),$$
+where $\phi(\cdot)$ denotes the probability density  function of a standard normal distribution.
+Let
+$$(\hat\mu_{xa},\hat\sigma_{xa}^2) = \hbox{arg}\max\limits_{\mu_{xa},\sigma_{xa}^2} l_{xa}(\mu_{xa},\sigma_{xa}^2).$$
+%
+%The likelihood function for the $b$th biomarker in controls is
+%$$L_{yb}(\mu_{yb},\sigma_{yb}^2)=\prod\limits_{k=1}^{n-n_b} \frac{\phi\big(\frac{y_{kb}-\mu_{yb}}{\sigma_{yb}}\big)}{1-\Phi\big(\frac{d_b-\mu_{yb}}{\sigma_{yb}}\big)},$$
+The log-likelihood function for the $b$th biomarker in controls is
+$$l_{yb}(\mu_{yb},\sigma_{yb}^2) = -\sum_{k=1}^{n-n_b}\frac{(y_{kb}-\mu_{yb})^2}{2\sigma_{yb}^2}-(n-n_b)\ln\left[1-\Phi\Big(\frac{d_b-\mu_{yb}}{\sigma_{yb}}\Big)\right]-(n-n_b)\ln\sigma_{yb}-\frac{n-n_b}{2}\ln(2\pi),$$
+and let
+$$(\hat\mu_{yb},\hat\sigma_{yb}^2) = \hbox{arg}\max\limits_{\mu_{yb},\sigma_{yb}^2} l_{yb}(\mu_{yb},\sigma_{yb}^2).$$
+
+
+The proposed estimation procedure is divided into four steps as follows:
+
+\begin{enumerate}
+\renewcommand{\labelenumii}{(\arabic{enumii})}
+    \item {\em Step 1.}
+    \begin{enumerate}
+        \item Generate $m_a$ observations from the truncated normal distribution with density function $f_a(x_a)={\phi\big(\frac{x_a-\hat\mu_{xa}}{\hat\sigma_{xa}}\big)}\big/{\Phi\big(\frac{d_a-\hat\mu_{xa}}{\hat\sigma_{xa}}\big)},x_a\in(-\infty,d_a),$
+denote them by $\tilde x_{1a},\cdots, \tilde x_{m_aa}.$ Using these values to replace NAs in $\bf X$ for the $a$th biomarkers in cases.
+        \item For $j$ from $a+1$ to $p$,
+            \begin{enumerate}
+                \item conduct the linear regression using $\{x_{ij},i=1,2,\cdots,m-m_j\}$ and $\{(x_{i1},\cdots,x_{i(j-1)}), i=1,2,\cdots,m-m_j\}$, that means,
+$$x_{ij}=\beta_{j0}+\beta_{j1}x_{i1}+\cdots+\beta_{j(j-1)}x_{i(j-1)}+\epsilon_j,$$
+where  $\beta_{j0}$ is the intercept, $\beta_{jl},l=1,\cdots,j-1$ are coefficients and $\epsilon_j$ is the error term following the normal distribution with mean 0 and unknown variance $\sigma_{\epsilon xj}^2$.
+Denote
+$${\beta}_j=\left(\beta_{j0}, \cdots, \beta_{j(j-1)}\right)^\tau,~~ {\bf x}_g= (x_{1g},\cdots,x_{(m-m_g)g})^\tau, g=1,\cdots,j$$ and
+${\bf X}_j=\left({\bf1}_{m-m_j},{\bf x}_1,\cdots,{\bf x}_{j-1}\right)$.
+
+The least square estimate(also the maximum likelihood estimate) of ${\bf\beta}_j$  and is
+$$\hat {\bf\beta}_j=\left(\hat\beta_{j0}, \cdots, \hat\beta_{j(j-1)}\right)^\tau  =\left( {\bf X}_j^\tau{\bf X}_j\right)^{-1} {\bf X}_j^\tau  {\bf x}_j. $$
+and the maximum likelihood estimate of $\sigma_{\epsilon xj}^2$ is
+$$\hat{\sigma}_{\epsilon xj}^2 = \frac{||{\bf x}_j - {\bf X}_j\hat {\bf\beta}_j||^2}{m - m_j}$$
+                 \item calculate $$\hat x_{ij} = \hat{\beta}_{j0}+\hat{\beta}_{j1}x_{i1}+\cdots+\beta_{j(j-1)}x_{i(j-1)} + \epsilon_{ij}~ \hbox{for} ~i=m-m_j+1,\cdots,m,$$
+where $\epsilon_{ij}$ is a random variate that follows the normal distribution ${\bf N} (0, \hat{\sigma}_{\epsilon xj})$ and less than $d_j$ and replace NAs of the $j$th biomarker by  $\{\hat{x}_{ij}, i=m-m_j+1,\cdots,m\}.$
+
+
+            \end{enumerate}
+        \item Update $\bf X$ to $\tilde {\bf X}$ using the imputed data. Denote $\tilde {\bf X}=(\tilde x_{ij})_{m\times p}~\widehat{=}~(\tilde{\bf x}_1^\tau, \cdots, \tilde{\bf x}_m^\tau)^\tau$.
+The log-likelihood function is
+%$$L(\mu_x, U_x)=\prod_{i=1}^{m}\frac1{(2\pi)^{\frac p2}|U_x|}e^{-\frac{(\tilde{\bf x}_i - %\mu_x)^{\tau}U_x^{-1}(\tilde{\bf x}_i - \mu_x)}{2 |U_x|}}$$
+$$l(\mu_x, U_x)=-\sum_{i=1}^{m}{\frac{(\tilde{\bf x}_i - \mu_x)^{\tau}U_x^{-1}(\tilde{\bf x}_i - \mu_x)}{2 |U_x|}}-\frac{mp}{2}\ln(2\pi)-m\ln|U_x|.$$
+Let $\Theta_x = U_x^{-1}=(\theta_{xij})_{p\times p}$. Using the graphical LASSO, the
+ penalized log-likelihood is
+$$l(\mu_x, \Theta_x)\propto \mathrm{ln} \det(\Theta_x) - \frac 1m \sum_{i = 1}^{m}(\tilde {\bf x}_i - \mu_x)^\tau\Theta_x(\tilde {\bf x}_i - \mu_x) - \lambda \sum_{i \ne j}\theta_{xij},$$
+where $\lambda>0$ is the tuning parameter. From
+$$\frac {\partial l(\mu_x, \Theta_x) }{\partial \mu_x} = 0$$
+we have $\hat{\mu}_x = \left(\frac{1}{m}\sum\limits_{i=1}^m\tilde x_{i1},\cdots,   \frac{1}{m}\sum\limits_{i=1}^m\tilde x_{ip}\right)^\tau.$
+By plugging in $\hat{\mu}_x$, maximizing $l(\mu_x, \Theta_x)$ over $\Theta_x$ is equivalent to maximizing
+$$\mathrm{log}\det(\Theta_x) - \hbox{tr}(V_x\Theta_x) - \lambda \sum_{i \ne j\in\{1,\cdots,p\}}\theta_{ij}$$
+where $V_x = \frac 1m \sum_{i = 1}^m (\tilde {\bf x}_i - \hat\mu_x)(\tilde {\bf x}_i  - \hat\mu_x)^\tau$.
+Using the graphical lasso algorithm ({\bf REF})(which has been implemented in the function $glasso$ of the R package $glasso$),  we can get the estimate of $U_x$, denote it by $\hat U_x.$
+    \end{enumerate}
+    \item {\em Step 2.}
+    Similarly perform step 1 for $\bf Y$ in controls, and denote the estimation of $\mu_y$ and $U_y$ by $\hat\mu_y$ and $\hat U_y$, respectively.
+    \item {\em Step 3.}
+    Plugging in the estimators $\hat{\mu}_x, \hat{\mu}_y, \hat{U}_x, \hat{U}_y$, we can use the expression in the notation section to estimate $\hbox{AUC},$ and $\hbox{pAUC}(\alpha)$ for some specific $\alpha$ ,denoting them as $\widehat{\hbox{AUC}},$ and $\widehat{\hbox{pAUC}(\alpha)}$.
+
+    \item {\em Step 4.}
+    Perform Steps 1-3 $r$ times (f.g. $r=50$), we obtain $r$ estimators of each parameter we want to estimate, which are denoted as $\widehat{\hbox{pAUC}}(\alpha)_t,t=1,\cdots,r$. So we get
+$$\widehat{\hbox{pAUC}}(\alpha) = \sum_{t=1}^r\widehat{\hbox{pAUC}}(\alpha)_t$$
+
+\end{enumerate}
+
+\subsection{Mathematical Theory}
+
+To verify the rationalization of our new estimation procedure, we need to prove that the dataset we get after the filling section can be seen as an sample from the original unknown population. We do this by by proving that each filled element follows the normal distribution ${\bf N}(\mu_j, \sigma_j^2)$, where $\mu_j$ and $\sigma_j^2$ are the corresponding unknown but true mean and variation.
+ 
+Taking ${\bf X}=(x_{ij})_{m\times p}$ for example. Suppose $i > m_j$, then $x_{ij}$ is a missing data and $x_{i,1}, \cdots, x_{i,(j-1)}$ $ {\bf x}_j= (x_{1j},\cdots,x_{(m-m_j)j})^\tau$ and
+${\bf X}_j=\left({\bf1}_{m-m_j},{\bf x}_1,\cdots,{\bf x}_{j-1}\right)$ are known. Instead of using only ${\bf x}_j$ to estimate the distribution of $x_{ij}$ and get a possible value $\hat{x}_{ij}$ to replace $x_{ij}$, we also want to use the relationship information of $x_{ij}$ between $x_{i,1}, \cdots, x_{i,(j-1)}$.  So we use theory of conditional distribution of multivariate normal distribution. 
+
+Denote $j \times 1$ vector $(x_1, \cdots, x_{j-1}, x_j)$ follows normal distribution  ${\bf N}(\mu_{1 \cdot j}, \Sigma_{1 \cdot j})$, where 
+$$\mu_{1 \cdot j} = (\mu_{x1}, \cdots, \mu_{xj})$$ and
+$$\Sigma_{1 \cdot j} =
+\left(\begin{array} {cc}
+\Sigma_{1 \cdot (j-1)} & \sigma_{1 \cdot (j-1),j}^2 \\
+\sigma_{1 \cdot (j-1),j}^2 & \sigma_{jj}^2 
+\end{array} \right)
+$$
+Given $x_{i,1 \cdot (j-1)} = (x_{i1}, \cdots, x_{i (j-1)})$, the conditional distribution of $x_{ij}$ is ${\bf N}(\mu_{xj | 1 \cdot (j-1)}, \sigma_{j | 1 \cdot (j-1)}^2)$, with 
+$$\mu_{xj | 1 \cdot (j-1)} = \mu_{xj} - \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1} (x_{i,1 \cdot (j-1)} - \mu_{1\cdot (j-1)}) = \beta_{j0} + \beta_j^{\tau} x_{i,1 \cdot (j-1)}$$
+$$ \sigma_{j | 1 \cdot (j-1)}^2 = \sigma_{jj}^2 - \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1}\sigma_{1 \cdot (j-1),j}^2 $$
+That is,
+$$x_{ij} = \beta_{j0} + \beta_j^{\tau} x_{i,1 \cdot (j-1)} + \epsilon_{ij}$$
+where $\epsilon_{ij}$'s mean is 0 and variance is $\sigma_{j | 1 \cdot (j-1)}^2$. So we can maximize the likelihood function to estimate these unknown parameters. More specifically, consider the likelihood funtion
+$$L(\mu_{xj | 1 \cdot (j-1)}, \sigma_{j | 1 \cdot (j-1)}^2) = \prod_{i = 1}^{m - m_j}\frac1{\sqrt{2\pi} \sigma_{j | 1 \cdot (j-1)}}exp(\frac{x_{ij} - \beta_{j0} - \hat{\beta}_j^{\tau} x_{i,1 \cdot {j-1}}}{2\sigma_{j | 1 \cdot (j-1)}^2})$$
+Maximize it, we can get the maximum likelihood estimate(MLE) of these parameters
+Denote the MLE of $\beta_{j0}$,$\beta_j$ and $\sigma_{j | 1 \cdot (j-1)}^2$ are $\hat{\beta_{j0}}$, $\hat{\beta}_j$ and $\hat{\sigma}_{j | 1 \cdot (j-1)}^2$, then the filled element is
+$$\hat{x}_{ij} = \hat{\beta}_{j0} + \hat{\beta}_j^{\tau} x_{i,1 \cdot (j-1)} + \epsilon_{ij}$$
+where $\epsilon_{ij}$ is a random variate that comes from ${\bf N}(0, \hat{\sigma}_{j | 1 \cdot (j-1)}^2)$. Now we prove that $\hat{x}_{ij}$'s mean is $\mu_{xj}$ and variance is $\sigma_{jj}^2$. Using the consistency property of maximum likelihood estimate, we have that
+\begin{equation*}
+	\begin{aligned}
+{\bf E}(\hat{x}_{ij}) &= {\bf E}(\mu_{xj} - \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1} (x_{i,1 \cdot (j-1)} - \mu_{1\cdot (j-1)})) \\
+				&= \mu_{xj} - \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1} ({\bf E}(x_{i,1 \cdot (j-1)}) - \mu_{1\cdot (j-1)}) \\
+				& = \mu_{xj}
+	\end{aligned}
+\end{equation*}
+
+\begin{equation*}
+	\begin{aligned}
+{\bf var}(\hat{x}_{ij})  &= {\bf var}(\hat{\beta}_j^{\tau} x_{i,1 \cdot (j-1)} + \epsilon_{ij})  \\
+				&={\bf var} (\hat{\beta}_j^{\tau} x_{1 \cdot (j-1)}) + {\bf var}(\epsilon_{ij}) \\
+				& \rightarrow  \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1} \Sigma_{1 \cdot (j-1)} \Sigma_{1 \cdot (j-1)}^{-1} \sigma_{1 \cdot (j-1),j}^2 + (\sigma_{jj}^2 - \sigma_{1 \cdot (j-1),j}^2 \Sigma_{1 \cdot (j-1)}^{-1}\sigma_{1 \cdot (j-1),j}^2) \\
+				& = \sigma_{jj}^2
+	\end{aligned}
+\end{equation*}
+This means that the dataset we get after filling all the missing values can be seen as a random sample subtracted from the original population.  Using this complete dataset, we obtain the estimate of the variance-covariance matrix through graphical glasso.
+
+
+\section{Numerical Studies}
+\subsection{Simulation studies}
+
+In this section, we conduct simulation studies to demonstrate the performance of the proposed resample-input-graphical LASSO method (denote it by RIG) by comparing it with two methods: substituting NA with LOD value (denote it by SNL) and  ignoring
+the NA values (denote it by IGN). We consider $p=120$ and $(m,n)$ is chosen from $\{(50,50),(75,75),(100,100)\}$.
+We set $\mu_x=(11,11,\cdots,11)^\tau$ and $\mu_y=(10,10,\cdots,10)^\tau$. $U_x=U_y$ are block diagonal matrixes composing of $U_0$ with $U_0$ being a $30 \times 30$ matrix with diagonal elements 1 and off-diagonal elements $\rho$, which is chosen from $\{0.2,0.5,0.8\}$. The LOD vaules are set to be 7.5, 8.5 or 9.5. We set $\alpha$ changing in $\{0.05,0.1,0.2,1\}$. For each setting, we repeat 1000 replicates to calculate the  mean-squared error (MSE) of all the $\hbox {pAUCs}$.
+
+The ratios of the MSEs between SNL and RIG are shown in Tables 1 and  2. It can  be seen that in all settings, the proposed RIG performs better than SNL, since all the ratios are bigger than 1.
+From both tables, we can see \\
+1) When the sample size is fixed, the ratios are increasing with $\rho$ increasing. It is reasonable since the RIG is constructed based on the linear regression and the conditional mean of a biomarker is the linear function of
+regressed biomarkers.  The imputed data is more close to its "true" value when $\rho$ is larger.
+For example, when $(m,n)=(100,100)$ and the LOD is 7.5, the ratio for $\hbox {pAUC}(0.05)$ under $\rho=0.2$ is 1.013, while it increases to be 1.413 under $\rho=0.8$.\\
+2) When $\rho$ is fixed, the ratio becomes bigger as the sample size gets larger. Take $\rho = 0.5$ and the LOD=8.5  as an example, when $(m,n)$ are (50,50),(75,75) and (100,100), the ratios for $\hbox {pAUC}(0.05)$ are 1.003, 1.047 and 1.124, respectively.
+
+The ratios of the MSEs of IGN over RIG are also given in Tables 1 and  2. It can  be seen that under  most of the considered scenarios, the proposed RIG performs better than IGN.
+In both tables, there are some NAs, which are made for IGN when more than 90\% of the 1000 estimates for a single $\hbox {pAUC}$ are NAs.
+From both tables, we find that \\
+1) When the sample size is given, the bigger the $\rho$ is, the better the proposed RIG is.
+For example, when $(m,n)=(75,75)$ and the LOD is 8.5, the ratios for $\hbox {pAUC}(0.1)$ changes from 0.987 to 1.189 as $\rho$ changes from 0.2 to 0.8.  \\
+2) When the LOD value is bigger, the IGN dose not always works. The ratios can be less than 1 as $(m,n) = (50,50)$.
+This can be explained by the fact that the estimations of mean and variance might be biased for RIG as the sample size is small.
+The ratios gets bigger as the sample size gets bigger. When $\rho$ is set to be 0.2 and the LOD is 8.5, the ratio for $\hbox {pAUC}(0.05)$ is NA, 0.993 and 1.01 respectively for the sample size being (50,50),(75,75) and (100,100).
+We would like to point that it is reasonable to compare IGN and RIG under large sample size since there are small percentages of NAs in the 1000 replicates.  And under this situation, the ratios are bigger than 1, which means that the proposed RIG has better performance than IGN.
+
+
+
+% Table generated by Excel2LaTeX from sheet '0.05and0.1'\begin{table}[htbp]  \centering
+  \caption{The ratios of MSE for $\hbox {pAUC}(\alpha = 0.05)$ and $\hbox {pAUC}(\alpha = 0.1)$.}
+    \begin{tabular}{c|cccccc}
+    \hline
+    \multirow{2}[2]{*}{($m,n$)} & \multirow{2}[2]{*}{$\rho$} & \multirow{2}[2]{*}{LOD} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.05)$} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.1)$} \\
+          &       &       & SNL/RIG & IGN/RIG & SNL/RIG & IGN/RIG \\
+    \hline
+    \multirow{9}[4]{*}{(50,50)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.000  & 0.996 & 1     & 0.996 \\          &       & 8.5   & 1.000  & NA    & 1     & NA \\          &       & 9.5   & 1.000  & MA    & 1     & NA \\\cline{2-7}          & \multirow{3}[1]{*}{0.5} & 7.5   & 1.003  & 0.994 & 1.002 & 0.995\\          &       & 8.5   & 1.003  & 0.969 & 1.002 & 0.957 \\          &       & 9.5   & 1.002  & NA    & 1.002 & NA \\          & \multirow{3}[1]{*}{0.8} & 7.5   & 1.069  & 1.062 & 1.053 & 1.047 \\          &       & 8.5   & 1.063  & 0.993 & 1.048 & 0.975 \\          &       & 9.5   & 1.054  & 0.907 & 1.041 & 0.858 ]\\    \hline    \multirow{9}[6]{*}{(75,75)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.002  & 1.002  & 1.002 & 1.002 \\          &       & 8.5   & 1.002  & 0.993  & 1.001 & 0.987 \\          &       & 9.5   & 1.001  & NA    & 1.001 & NA\\\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.050  & 1.05  & 1.04  & 1.04\\          &       & 8.5   & 1.047  & 1.042 & 1.038 & 1.031 \\          &       & 9.5   & 1.042  & NA    & 1.034 & NA \\\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.243  & 1.243 & 1.192 & 1.192 \\          &       & 8.5   & 1.244  & 1.239 & 1.194 & 1.189 \\          &       & 9.5   & 1.216  & 1.122 & 1.173 & 1.058 ]\\    \hline    \multirow{9}[6]{*}{(100,100)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.013  & 1.01 & 1.012 & 1.013 \\          &       & 8.5   & 1.012  & 1.01 & 1.011 & 1.011 \\          &       & 9.5   & 1.009  & NA    & 1.009 & NA\\\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.126  & 1.144 & 1.105 & 1.119 \\          &       & 8.5   & 1.124  & 1.144 & 1.104 & 1.119 \\          &       & 9.5   & 1.103  & NA    & 1.087 & NA \\\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.413  & 1.45  & 1.341 & 1.367 \\          &       & 8.5   & 1.400  & 1.472 & 1.331 & 1.383 \\          &       & 9.5   & 1.337  & 1.356 & 1.283 & 1.278 \\    \hline    \end{tabular}%  \label{tab:addlabel}%\end{table}%
+% Table generated by Excel2LaTeX from sheet '0.2and1.0'\begin{table}[htbp]  \centering
+  \caption{the ratio of MSE for $\hbox {pAUC}(\alpha = 0.2)$ and $\hbox {AUC}$}
+    \begin{tabular}{c|cccccc}
+    \hline
+    \multirow{2}[2]{*}{($m,n$)} & \multirow{2}[2]{*}{$\rho$} & \multirow{2}[2]{*}{LOD} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.2)$} & \multicolumn{2}{c}{$\hbox {AUC}$} \\
+          &       &       & SNL/RIG & IGN/RIG & SNL/RIG & IGN/RIG \\
+    \hline    \multirow{9}[4]{*}{(50,50)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.000  & 0.996 & 1     & 0.995\\          &       & 8.5   & 1.000  & NA    & 1     & NA \\          &       & 9.5   & 1.000  & NA    & 1     & NA \\\cline{2-7}          & \multirow{3}[1]{*}{0.5} & 7.5   & 1.002  & 0.995 & 1.002 & 0.995\\          &       & 8.5   & 1.002  & 0.937 & 1.002 & 0.819 \\          &       & 9.5   & 1.001  & NA    & 1.001 & NA \\          & \multirow{3}[1]{*}{0.8} & 7.5   & 1.041  & 1.037 & 1.033 & 1.03 \\          &       & 8.5   & 1.038  & 0.957 & 1.03  & 0.908 \\          &       & 9.5   & 1.032  & 0.783 & 1.026 & 0.268 \\    \hline    \multirow{9}[6]{*}{(75,75)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.001  & 1.001  & 1.001 & 1.001\\          &       & 8.5   & 1.001  & 0.975  & 1.001 & 0.892 \\          &       & 9.5   & 1.001  & NA    & 1.001 & NA\\\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.034  & 1.034 & 1.03  & 1.03\\          &       & 8.5   & 1.032  & 1.023 & 1.028 & 1.005 \\          &       & 9.5   & 1.029  & NA    & 1.025 & NA \\\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.156  & 1.156 & 1.127 & 1.127\\          &       & 8.5   & 1.158  & 1.153 & 1.129 & 1.122 \\          &       & 9.5   & 1.142  & 0.988 & 1.117 & 0.649 \\    \hline    \multirow{9}[6]{*}{(100,100)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.011  & 1.01& 1.009 & 1.01 \\          &       & 8.5   & 1.010  & 1.01 & 1.008 & 1.006 \\          &       & 9.5   & 1.008  & NA    & 1.007 & NA\\\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.091  & 1.102 & 1.081 & 1.09\\          &       & 8.5   & 1.090  & 1.102 & 1.081 & 1.09 \\          &       & 9.5   & 1.076  & NA    & 1.069 & NA\\\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.286  & 1.305 & 1.238 & 1.252\\          &       & 8.5   & 1.279  & 1.317 & 1.233 & 1.263 \\          &       & 9.5   & 1.241  & 1.211 & 1.205 & 1.041\\    \hline    \end{tabular}%  \label{tab:addlabel}%\end{table}%
+
+% Table generated by Excel2LaTeX from sheet 'Sheet1'
+\begin{table}[htbp]
+  \centering
+  \caption{The ratios of MSE for $\hbox {pAUC}(\alpha = 0.05)$ and $\hbox {pAUC}(\alpha = 0.1)$.}
+    \begin{tabular}{c|cccccc}
+    \hline
+    \multirow{2}[2]{*}{($m,n$)} & \multirow{2}[2]{*}{$\rho$} & \multirow{2}[2]{*}{LOD} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.05)$} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.1)$} \\
+          &       &       & SNL/RIG & IN/RIG & SNL/RIG & IN/RIG \\
+    \hline
+    \multirow{9}[6]{*}{(50,50)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.000  & 0.993  & 1.000  & 0.992  \\
+          &       & 8.5   & 1.000  & NA    & 1.000  & NA \\
+          &       & 9.5   & 1.000  & NA    & 1.000  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.007  & 0.990  & 1.005  & 0.990  \\
+          &       & 8.5   & 1.007  & 0.943  & 1.005  & 0.923  \\
+          &       & 9.5   & 1.008  & NA    & 1.006  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.141  & 1.125  & 1.107  & 1.095  \\
+          &       & 8.5   & 1.139  & 0.991  & 1.106  & 0.955  \\
+          &       & 9.5   & 1.142  & 0.832  & 1.112  & 0.751  \\
+    \hline
+    \multirow{9}[6]{*}{(75,75)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.003  & 1.003  & 1.003  & 1.003  \\
+          &       & 8.5   & 1.003  & 0.979  & 1.003  & 0.965  \\
+          &       & 9.5   & 1.003  & NA    & 1.002  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.101  & 1.102  & 1.081  & 1.081  \\
+          &       & 8.5   & 1.094  & 1.085  & 1.075  & 1.064  \\
+          &       & 9.5   & 1.092  & NA    & 1.077  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.552  & 1.555  & 1.429  & 1.430  \\
+          &       & 8.5   & 1.534  & 1.519  & 1.419  & 1.405  \\
+          &       & 9.5   & 1.502  & 1.308  & 1.414  & 1.189  \\
+    \hline
+    \multirow{9}[6]{*}{(100,100)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.026  & 1.028  & 1.023  & 1.025  \\
+          &       & 8.5   & 1.026  & 1.027  & 1.023  & 1.024  \\
+          &       & 9.5   & 1.020  & NA    & 1.018  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.270  & 1.314  & 1.224  & 1.257  \\
+          &       & 8.5   & 1.258  & 1.301  & 1.216  & 1.248  \\
+          &       & 9.5   & 1.224  & NA    & 1.196  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.976  & 2.084  & 1.784  & 1.857 \\
+          &       & 8.5   & 1.894  & 2.100  & 1.732  & 1.874  \\
+          &       & 9.5   & 1.829  & 1.885  & 1.723  & 1.713  \\
+    \hline
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
+% Table generated by Excel2LaTeX from sheet 'Sheet1'
+\begin{table}[htbp]
+  \centering
+  \caption{the ratio of MSE for $\hbox {pAUC}(\alpha = 0.2)$ and $\hbox {AUC}$}
+    \begin{tabular}{c|cccccc}
+    \hline
+    \multirow{2}[2]{*}{($m,n$)} & \multirow{2}[2]{*}{$\rho$} & \multirow{2}[2]{*}{LOD} & \multicolumn{2}{c}{$\hbox {pAUC}(\alpha = 0.2)$} & \multicolumn{2}{c}{$\hbox {AUC}$} \\
+          &       &       & SNL/RIG & IN/RIG & SNL/RIG & IN/RIG \\
+    \hline
+    \multirow{9}[6]{*}{(50,50)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.000  & 0.992  & 1.000  & 0.991  \\
+          &       & 8.5   & 1.000  & NA    & 1.000  & NA \\
+          &       & 9.5   & 1.000  & NA    & 1.000  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.004  & 0.990  & 1.003  & 0.990  \\
+          &       & 8.5   & 1.004  & 0.891  & 1.003  & 0.755  \\
+          &       & 9.5   & 1.005  & NA    & 1.004  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.084  & 1.075  & 1.067  & 1.060  \\
+          &       & 8.5   & 1.084  & 0.920  & 1.067  & 0.834  \\
+          &       & 9.5   & 1.092  & 0.648  & 1.076  & 0.668  \\
+    \hline
+    \multirow{9}[6]{*}{(75,75)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.003  & 1.003  & 1.002  & 1.002  \\
+          &       & 8.5   & 1.003  & 0.946  & 1.002  & 1.091  \\
+          &       & 9.5   & 1.002  & NA    & 1.002  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.068  & 1.068  & 1.060  & 1.060  \\
+          &       & 8.5   & 1.063  & 1.047  & 1.056  & 1.017  \\
+          &       & 9.5   & 1.066  & NA    & 1.060  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.344  & 1.345  & 1.277  & 1.278  \\
+          &       & 8.5   & 1.339  & 1.325  & 1.276  & 1.258  \\
+          &       & 9.5   & 1.351  & 1.069  & 1.301  & 0.747  \\
+    \hline
+    \multirow{9}[6]{*}{(100,100)} & \multirow{3}[2]{*}{0.2} & 7.5   & 1.021  & 1.023  & 1.018  & 1.019  \\
+          &       & 8.5   & 1.021  & 1.021  & 1.018  & 1.015  \\
+          &       & 9.5   & 1.017  & NA    & 1.016  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.5} & 7.5   & 1.193  & 1.219  & 1.171  & 1.194  \\
+          &       & 8.5   & 1.187  & 1.212  & 1.167  & 1.186  \\
+          &       & 9.5   & 1.176  & NA    & 1.163  & NA \\
+\cline{2-7}          & \multirow{3}[2]{*}{0.8} & 7.5   & 1.644  & 1.696  & 1.526  & 1.563  \\
+          &       & 8.5   & 1.612  & 1.715  & 1.509  & 1.586  \\
+          &       & 9.5   & 1.644  & 1.570  & 1.581  & 1.252  \\
+    \hline
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
+\subsection{Application}
+To illustrate the application of our proposed method, we use a survival status dataset with 150 biomarkers. The survival status has two values, short and long. There are 15 observations belonging to the short section and 11 to the long section. We choose the biomarkers that have at least one missing value and do not have too many missing value, that is in each section, the number of missing value can not be more than 30 percent of the total observation numbers. So we finally choose 45 biomarkers. Using this dataset, we compare the estimated $\hbox {pAUCs}$ of the proposed method and that of the replacing LOD method. When $\alpha$ changes in $\{0.05,0.1,0.2,1\}$, the corresponding $\hbox {pAUCs}$ of the former are 0.04995,0.09994,0.19994 and 0.99994,respectively, while that of the latter is 0.03989,0.08372,0.17503 and 0.95428. So our proposed method performs better.
+
+
+
+\end{document}
